@@ -17,10 +17,10 @@ public class FootballStatsSimulator {
     static final int Max_Players = 20;
     
     // Arrays for players and stats
-    static string[] playerNames = new String[max_Players];
+    static String[] playerNames = new String[Max_Players];
     static int[] gamesPlayed = new int[Max_Players];
     static int[] passingYards = new int[Max_Players];
-    static int[] touchdown = new int[Max_Players];
+    static int[] touchdowns = new int[Max_Players];
     static int[] completions = new int[Max_Players]; 
     static int[] interceptions = new int[Max_Players];
 
@@ -43,7 +43,7 @@ public class FootballStatsSimulator {
                     addPlayers(input);
                     break;
                 case 2:
-                    enterGamesStats(input);
+                    enterGameStats(input);
                     break;
                 case 3:
                     displayLeaderboard();
@@ -52,7 +52,7 @@ public class FootballStatsSimulator {
                     displayAverages();
                     break;
                 case 5:
-                    simulateRandomGame(imput); // freature using Random
+                    simulateRandomGame(input); // freature using Random
                     break;
                 case 6:
                     System.out.println("Exiting Fottball Stats Simulator, Goodbye!");
@@ -93,7 +93,7 @@ public class FootballStatsSimulator {
     // 1) Input: Add players
     public static void addPlayers(Scanner input) {
         System.out.print("How many players do you want to add? ");
-        while (!input.hasnextInt()) {
+        while (!input.hasNextInt()) {
             System.out.print("Please enter a number: ");
             input.next();
         }
@@ -109,7 +109,7 @@ public class FootballStatsSimulator {
             System.out.print("Enter name for player " + (playerCount + 1) + ": ");
             String name = input.nextLine();
 
-            playernames[playerCount] = name;
+            playerNames[playerCount] = name;
             gamesPlayed[playerCount] = 0;
             passingYards[playerCount] = 0;
             touchdowns[playerCount] = 0;
@@ -148,7 +148,7 @@ public class FootballStatsSimulator {
             int comps = readNonNegativeInt(input);
 
             System.out.print("interceptions this game: ");
-            int ints = readNonNegativeInt[input];
+            int ints = readNonNegativeInt(input);
 
             // Update totals 
             gamesPlayed[index]++;
@@ -160,6 +160,167 @@ public class FootballStatsSimulator {
         }
 
         // Read a non-negative intgers. 
+        public static int readNonNegativeInt(Scanner input) {
+            int value;
+            while (true) {
+                while (!input.hasNextInt()) {
+                    System.out.print("Please enter a whole number: ");
+                    input.next();
+                }
+                value = input.nextInt();
+                if (value < 0) {
+                    System.out.print("Please enter a non-negative number: ");
+                } else {
+                    break;
+                }
+            }
+            return value;
+        }
 
+        // Find player index by name
+        public static int findPlayerIndex(String name) {
+            for (int i = 0; i < playerCount; i++) {
+                if (playerNames[i].equalsIgnoreCase(name)) {
+                    return i;
+                }
+            }
+            return -1;
+        }
 
+        // Output: display leaderboard sorted by rating
+        public static void displayLeaderboard() {
+            if (playerCount == 0) {
+                System.out.println("No player to display.");
+                return;
+            }
+
+            // make an array of indices for sorting
+            int[] indices = new int[playerCount];
+            for (int i = 0; i < playerCount; i++) {
+                indices[i] = i;
+            }
+
+            // bubble sort by rating
+            for (int i = 0; i < playerCount - 1; i++) {
+                for (int j = 0; j < playerCount - 1 -i; j++) {
+                    double ratingJ = getRating(indices[j]);
+                    double ratingNext = getRating(indices[j + 1]);
+                    if (ratingJ < ratingNext) {
+                        int temp = indices[j];
+                        indices[j] = indices[j + 1];
+                        indices[j + 1] = temp;
+                    }
+                }
+            }
+
+            System.out.println();
+            System.out.println("===== Leader (by Rating) =====");
+            System.out.printf("%-20s %10s %10s %10s %10s %10s\n", 
+                    "Player", "Yards", "TDs", "Comps", "INTs", "Rating");
+            
+            for (int rank = 0; rank < playerCount; rank++) {
+                int i = indices[rank];
+                double rating = getRating(i);
+                System.out.printf("%-20s %10d %10d %10d %10d %10.2f\n",
+                    playerNames[i],
+                    passingYards[i],
+                    touchdowns[i],
+                    completions[i],
+                    interceptions[i], 
+                    rating);
+            }
+
+        }
+
+        // Output: display averages per game
+        public static void displayAverages() {
+            if (playerCount == 0) {
+                System.out.println("No player to display.");
+                return;
+            }
+
+            System.out.println();
+            System.out.println("===== Averages per game =====");
+            System.out.printf("%-20s %10s %10s %10s\n",
+                "player", "Yds/Game", "TD/Game", "Comp/Game");
+            
+            for (int i = 0; i < playerCount; i++) {
+                if (gamesPlayed[i] == 0) {
+                    System.out.printf("%-20s %10s %10s %10s\n",
+                        playerNames[i], "N/A", "N/A", "N/A");
+                } else {
+                    double ydsPerGame = getYardsPerGame(i);
+                    double tdPerGame = getTDsPerGame(i);
+                    double comPerGame = getCompsPerGame(i);
+
+                    System.out.printf("%-20s %10.2f %10.2f %10.2f\n",
+                        playerNames[i], ydsPerGame, tdPerGame, comPerGame);
+                }
+            }
+        }
+
+        // Methods for averages and rating
+
+        public static double getYardsPerGame(int index) {
+            if (gamesPlayed[index] == 0) {
+                return 0.0;
+            }
+            return (double) passingYards[index] / gamesPlayed[index];
+        }
+
+        public static double getTDsPerGame(int index) {
+            if (gamesPlayed[index] == 0) {
+                return 0.0;
+            }
+            return (double) touchdowns[index] / gamesPlayed[index];
+        }
+
+        public static double getCompsPerGame(int index) {
+            if (gamesPlayed[index] == 0) {
+                return 0.0;
+            }
+            return (double) completions[index] / gamesPlayed[index];
+        }
+
+        // Simple rating formula using stats
+        public static double getRating(int index) {
+            double rating = 0.0;
+            rating += passingYards[index] * 0.05;
+            rating += touchdowns[index] * 10;
+            rating += interceptions[index] * 5;
+            return rating;
+        }
+
+        // Simulate a random game for players
+        public static void simulateRandomGame(Scanner input) {
+            if (playerCount == 0) {
+                System.out.println("No player yets Please add player first.");
+                return;
+            }
+
+            input.nextLine();
+            System.out.print("Enter player name to simulate a game: ");
+            String name = input.nextLine();
+
+            int index = findPlayerIndex(name);
+            if (index == -1) {
+                System.out.println("Player not found. ");
+                return;
+            }
+
+            int yards = rand.nextInt(401); // 0-400
+            int tds = rand.nextInt(6); // 0-5
+            int comps = rand.nextInt(41); // 0-40
+            int ints = rand.nextInt(4); // 0-3
+
+            gamesPlayed[index]++;
+            passingYards[index] += yards;
+            touchdowns[index] += tds;
+            completions[index] += comps;
+            interceptions[index] += ints;
+
+            System.out.println("Random game simulated for " + playerNames[index] + ":");
+            System.out.println("Yards: " + yards + ", TDs: " + tds + 
+                ", Completions: " + comps + ", INTs: " + ints);
+        }
 }
