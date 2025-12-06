@@ -2,7 +2,7 @@
  * Name: Christopher bostian
  * Date: December 6, 2025
  * 
- * Purpose: This program tracks and analyzes football player stats using arrays and methods.
+ * Purpose:This program tracks and analyzes football player stats using arrays and methods.
  * The user can add players, enter game stats, view a leaderboards, and see 
  * averages per game.
  * 
