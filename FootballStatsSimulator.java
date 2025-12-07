@@ -52,10 +52,27 @@ public class FootballStatsSimulator {
                     displayAverages();
                     break;
                 case 5:
-                    simulateRandomGame(input); // freature using Random
+                    System.out.println("\nRandom Game Option:"); // freature using Random
+                    System.out.println("1. Simulate a random game for One player");
+                    System.out.println("2. Simulate a random game for All player");
+
+                    int simChoice;
+                    while (!input.hasNextInt()) {
+                        System.out.print("Please enter 1 or 2: ");
+                        input.next(); 
+                    }
+                    simChoice = input.nextInt();
+
+                    if (simChoice == 1){
+                        simulateRandomGame(input); // one player
+                    } else if (simChoice == 2) {
+                        simulateAllRandomGames(); // All player
+                    } else {
+                        System.out.println("Invalid choice. Returning to mian menu.");
+                    }
                     break;
                 case 6:
-                    System.out.println("Exiting Fottball Stats Simulator, Goodbye!");
+                    System.out.println("Exiting Football Stats Simulator, Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice. Please try again.");                        
@@ -153,7 +170,8 @@ public class FootballStatsSimulator {
             // Update totals 
             gamesPlayed[index]++;
             passingYards[index] += yards;
-            touchdowns[index] += comps;
+            touchdowns[index] += tds;
+            completions[index] += comps;
             interceptions[index] += ints;
 
             System.out.println("Stats updated for " + playerNames[index] + ".");
@@ -287,7 +305,7 @@ public class FootballStatsSimulator {
             double rating = 0.0;
             rating += passingYards[index] * 0.05;
             rating += touchdowns[index] * 10;
-            rating += interceptions[index] * 5;
+            rating -= interceptions[index] * 5;
             return rating;
         }
 
@@ -308,19 +326,58 @@ public class FootballStatsSimulator {
                 return;
             }
 
-            int yards = rand.nextInt(401); // 0-400
-            int tds = rand.nextInt(6); // 0-5
-            int comps = rand.nextInt(41); // 0-40
-            int ints = rand.nextInt(4); // 0-3
+        
 
+            // Random stats for every player 
+            int yards = rand.nextInt(401); // 0-400 yards
+            int tds = rand.nextInt(6); // 0-5 touchdowns
+            int comps = rand.nextInt(41); // 0-40 completions
+            int ints = rand.nextInt(4); // 0-3 interceptions 
+
+            // update stats 
             gamesPlayed[index]++;
             passingYards[index] += yards;
             touchdowns[index] += tds;
             completions[index] += comps;
             interceptions[index] += ints;
 
-            System.out.println("Random game simulated for " + playerNames[index] + ":");
+            System.out.println("Player: " + playerNames[index]);
             System.out.println("Yards: " + yards + ", TDs: " + tds + 
                 ", Completions: " + comps + ", INTs: " + ints);
-        }
-}
+            System.out.println();
+                       
+        }  
+
+        // Simulate a random game all player 
+        public static void simulateAllRandomGames() {
+            if(playerCount == 0) {
+                System.out.print("No player yet. Please add player first.");
+                return;
+            }
+
+            System.out.print("\nSimulating a random game for All player...\n");
+
+            for (int i = 0; i < playerCount; i++) {
+            // Random stats for every player 
+            int yards = rand.nextInt(401); // 0-400 yards
+            int tds = rand.nextInt(6); // 0-5 touchdowns
+            int comps = rand.nextInt(41); // 0-40 completions
+            int ints = rand.nextInt(4); // 0-3 interceptions 
+
+            // update starts 
+            gamesPlayed[i]++;
+            passingYards[i] += yards;
+            touchdowns[i] += tds;
+            completions[i] += comps;
+            interceptions[i] += ints;
+
+
+            System.out.println("Player: " + playerNames[i]);
+            System.out.println("Yards: " + yards + ", TDs: " + tds + 
+                ", Completions: " + comps + ", INTs: " + ints);
+            System.out.println();
+            }
+
+             System.out.println("Random game simulation complete for All players.");
+         }    
+ }
